@@ -24,10 +24,11 @@ jar {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+compileJava.dependsOn(processResources)
+
 repositories {
     mavenCentral()
 }
-
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
