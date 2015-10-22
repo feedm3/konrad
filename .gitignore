@@ -5,7 +5,7 @@
 *.iml
 
 ## Directory-based project format:
-.idea/
+.idea/*
 # if you remove the above rule, at least ignore the following:
 
 # User-specific stuff:
@@ -69,3 +69,5 @@ gradle-app.setting
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+### Custom
+!.idea/runConfigurations/
