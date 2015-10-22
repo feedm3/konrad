@@ -30,6 +30,7 @@ public class ScheduledUrlChecker {
     @Scheduled(fixedRate = 10000)
     public void reportUrlUpStatus() {
         logger.info("Start checking Urls...");
+        final StringBuilder stringBuilder = new StringBuilder();
 
         for (final String urlToCheck : properties.getUrls()) {
             ResponseEntity responseEntity = null;
@@ -41,12 +42,19 @@ public class ScheduledUrlChecker {
                 // is in the ResponseEntity object.
             } finally {
                 if (isResponseOk(responseEntity)) {
+                    stringBuilder.append(urlToCheck).append(" is up").append("\n");
                     logger.info(urlToCheck + " is up");
                 } else {
+                    stringBuilder.append(urlToCheck).append(" is down").append("\n");
                     logger.error(urlToCheck + " is down");
                 }
             }
         }
+
+        final SlackMessage message = new SlackMessage();
+        message.setUsername("konrad");
+        message.setText(stringBuilder.toString());
+        restTemplate.postForEntity(properties.getWebhookurl(), message, null);
     }
 
     private boolean isResponseOk(final ResponseEntity responseEntity) {
