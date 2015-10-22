@@ -7,6 +7,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class is used to request url's and check if they are up or down.
  *
@@ -30,21 +33,13 @@ public class ScheduledTask {
     public void reportUrlUpStatus() {
         logger.info("Start checking Urls...");
 
-        final StringBuilder slackMessage = new StringBuilder();
+        final Map<String, Boolean> urlOkResults = new HashMap<>();
         for (final String urlToCheck : properties.getUrls()) {
             boolean urlOk = urlChecker.isUrlOk(urlToCheck);
-            if (urlOk) {
-                slackMessage.append(":white_check_mark: ").append(urlToCheck).append("\n");
-            } else {
-                slackMessage.append(":no_entry: ").append(urlToCheck).append("\n");
-            }
+            urlOkResults.put(urlToCheck, urlOk);
         }
 
-        final SlackMessage message = new SlackMessage();
-        message.setUsername("konrad");
-        message.setText(slackMessage.toString());
-
-        // TODO muss auch in try catch, falls slack url falsch ist
+        final SlackMessage message = SlackMessage.build(urlOkResults);
         restTemplate.postForEntity(properties.getWebhookurl(), message, null);
     }
 
