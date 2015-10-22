@@ -1,4 +1,4 @@
-package com.codecrafters;
+package com.codecrafters.konrad;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +9,8 @@ import java.util.List;
  * @author Fabian Dietenberger
  */
 @Configuration
-@ConfigurationProperties(prefix="uptime")
-public class UptimeCheckerProperties {
+@ConfigurationProperties(prefix="konrad")
+public class KonradProperties {
 
     private List<String> urls;
     private String webhookurl;

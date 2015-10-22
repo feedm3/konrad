@@ -1,3 +1,3 @@
-# Uptime-checker
+# Konrad
 
-Uptime checker is a little server which checks if given URL's are up or down.
+Konrad is a little server which checks if given URL's are up or down.

@@ -1,4 +1,4 @@
-package com.codecrafters;
+package com.codecrafters.konrad;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.net.URI;
  *  @author Fabian Dietenberger
  */
 @Component
-public class ScheduledUrlCheckTask {
+public class ScheduledUrlChecker {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -25,7 +25,7 @@ public class ScheduledUrlCheckTask {
     RestTemplate restTemplate;
 
     @Autowired
-    UptimeCheckerProperties properties;
+    KonradProperties properties;
 
     @Scheduled(fixedRate = 10000)
     public void reportUrlUpStatus() {

@@ -1,12 +1,12 @@
 {
   "properties": [
     {
-      "name": "uptime.urls",
+      "name": "konrad.urls",
       "type": "java.util.List<java.lang.String>",
       "description": "Your URL's to check."
     },
     {
-      "name": "uptime.slack.slackwebhookurl",
+      "name": "konrad.webhookurl",
       "type": "java.lang.String",
       "description": "Your slack webhook URL."
     }
