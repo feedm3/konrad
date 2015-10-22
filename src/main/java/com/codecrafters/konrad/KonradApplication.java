@@ -1,5 +1,8 @@
 package com.codecrafters.konrad;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +13,23 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 public class KonradApplication {
 
-    public static void main(String[] args) {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public static void main(final String[] args) {
         SpringApplication.run(KonradApplication.class, args);
+    }
+
+    @Bean
+    CommandLineRunner runner(final KonradProperties properties, final RestTemplate restTemplate) {
+        return args -> {
+            final SlackMessage message = SlackMessage.build("konrad is up and running\n");
+            try {
+                restTemplate.postForEntity(properties.getWebhookurl(), message, null);
+            } catch (Exception ignored) {
+                logger.error("Slack Webhook URL not working. Plase check your webhook URL and restart konrad");
+                System.exit(0);
+            }
+        };
     }
 
     @Bean
