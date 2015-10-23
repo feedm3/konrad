@@ -6,16 +6,17 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
     }
 }
 
 apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'spring-boot' 
-apply plugin: 'io.spring.dependency-management' 
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
 
 jar {
     baseName = 'konrad'
@@ -24,6 +25,14 @@ jar {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+sourceSets {
+    main.java.srcDir "src/main/java"
+    main.resources.srcDir "src/main/resources"
+    test.java.srcDir "src/test/java"
+    test.groovy.srcDir "src/test/groovy"
+    test.resources.srcDir "src/test/resources"
+}
+
 compileJava.dependsOn(processResources)
 
 repositories {
@@ -31,16 +40,18 @@ repositories {
 }
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-configuration-processor')
-    testCompile('org.springframework.boot:spring-boot-starter-test') 
+    compile 'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-configuration-processor'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test',
+            'org.spockframework:spock-core:1.0-groovy-2.4'
 }
 
 
 eclipse {
     classpath {
-         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+        containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+        containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
     }
 }
 
