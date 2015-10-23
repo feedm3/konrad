@@ -1,21 +1,20 @@
 package com.codecrafters.konrad
-
-import org.springframework.web.client.RestTemplate
-import spock.lang.Shared
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 /**
  * This class is used as test for the UrlChecker
  *
  * @author Fabian Dietenberger
  */
+@ContextConfiguration(loader = SpringApplicationContextLoader.class, classes = KonradApplication.class)
+@ActiveProfiles("test")
 class UrlCheckerTest extends Specification {
 
-    @Shared
+    @Autowired
     UrlChecker urlChecker
-
-    void setup() {
-        urlChecker = new UrlChecker(new RestTemplate())
-    }
 
     def "working urls must be validated as ok"() {
         expect:
