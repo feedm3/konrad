@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/feedm3/konrad.svg)](https://travis-ci.org/feedm3/konrad)
 
-konrad checks your URL's in a given intervall. If they are down he notifies you in slack.
+konrad checks your URL's in a given intervall. If they are down he notifies you in [slack](https://slack.com/).
 
 ## Run
 
