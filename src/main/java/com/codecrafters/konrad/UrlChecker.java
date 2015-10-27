@@ -31,22 +31,25 @@ public class UrlChecker {
     public boolean isUrlOk(final String url) {
         boolean urlOk = false;
         if (!StringUtils.isEmpty(url)) {
-            ResponseEntity responseEntity = null;
-            try {
-                responseEntity = restTemplate.getForEntity(URI.create(url), null);
-            } catch (Exception ignored) {
-                // RestTemplate will throw an error if the request didn't work.
-                // We don't need the information from this error, all information
-                // is in the ResponseEntity object.
-            } finally {
-                if (isResponseOk(responseEntity)) {
-                    urlOk = true;
-                }
+            final ResponseEntity responseEntity = requestUrl(url);
+            if (isResponseOk(responseEntity)) {
+                urlOk = true;
             }
         }
         return urlOk;
     }
 
+    private ResponseEntity requestUrl(final String url) {
+        ResponseEntity responseEntity = null;
+        try {
+            responseEntity = restTemplate.getForEntity(URI.create(url), null);
+        } catch (Exception ignored) {
+            // RestTemplate will throw an error if the request didn't work.
+            // We don't need the information from this error, all information
+            // is in the ResponseEntity object.
+        }
+        return responseEntity;
+    }
 
     private boolean isResponseOk(final ResponseEntity responseEntity) {
         if (responseEntity == null) {
