@@ -1,34 +1,44 @@
 package com.codecrafters.konrad
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationContextLoader
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 /**
  * This class is used as test for the UrlChecker
  *
  * @author Fabian Dietenberger
  */
-@ContextConfiguration(loader = SpringApplicationContextLoader.class, classes = KonradApplication.class)
-@ActiveProfiles("test")
 class UrlCheckerTest extends Specification {
 
-    @Autowired
-    UrlChecker urlChecker
-
     def "working urls must be validated as ok"() {
+        given:
+        def restTemplate = Stub(RestTemplate)
+        def urlChecker = new UrlChecker(restTemplate)
+
+        and:
+        restTemplate.getForEntity(_, _) >> { return new ResponseEntity<>(httpStatus) }
+
         expect:
         urlChecker.isUrlOk(url) == isOk
 
         where:
-        isOk  | url
-        true  | "http://google.com"
-        true  | "http://facebook.com"
-        true  | "https://www.youtube.com/watch?v=a-xWhG4UU_Y"
-        false | null
-        false | ""
-        false | "nxyaeww"
-        false | "15238csdu"
-        false | "http:/google.com"
+        url                               | httpStatus                   | isOk
+        "http://google.com"               | HttpStatus.OK                | true
+        "http://bit.ly/DefEditionSpotify" | HttpStatus.MOVED_PERMANENTLY | true
+        null                              | _                            | false
+        ""                                | _                            | false
+        "dawdwad"                         | HttpStatus.NOT_FOUND         | false
+    }
+
+    def "restTemplate should be called"() {
+        given:
+        def restTemplate = Mock(RestTemplate)
+        def urlChecker = new UrlChecker(restTemplate)
+
+        when:
+        urlChecker.isUrlOk("http://google.com")
+
+        then:
+        1 * restTemplate.getForEntity(_, _)
     }
 }
