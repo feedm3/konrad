@@ -1,7 +1,5 @@
 package com.codecrafters.konrad;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +8,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is used the check if a URL is up or down.
@@ -19,15 +19,38 @@ import java.net.URI;
 @Component
 public class UrlChecker {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    // to  make external requests
+    private final RestTemplate restTemplate;
 
-    private RestTemplate restTemplate;
+    // properties from the .properties file
+    private final KonradProperties properties;
 
     @Autowired
-    public UrlChecker(final RestTemplate restTemplate) {
+    public UrlChecker(final RestTemplate restTemplate, final KonradProperties properties) {
         this.restTemplate = restTemplate;
+        this.properties = properties;
     }
 
+    /**
+     * Load urls from the .properties file, check them and return the result.
+     *
+     * @return map with url and status mapping. if status is true the url is ok
+     */
+    public Map<String, Boolean> checkUrlsFromProperties() {
+        final Map<String, Boolean> urlOkResults = new HashMap<>();
+        for (final String urlToCheck : properties.getUrls()) {
+            boolean urlOk = isUrlOk(urlToCheck);
+            urlOkResults.put(urlToCheck, urlOk);
+        }
+        return urlOkResults;
+    }
+
+    /**
+     * Check a url if it is ok. The url is ok when it's reachable.
+     *
+     * @param url the url to check
+     * @return true if the url is ok (reachable)
+     */
     public boolean isUrlOk(final String url) {
         boolean urlOk = false;
         if (!StringUtils.isEmpty(url)) {

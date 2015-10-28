@@ -10,10 +10,10 @@ import spock.lang.Specification
  */
 class UrlCheckerTest extends Specification {
 
-    def "working urls must be validated as ok"() {
+    def "single urls must be validated correctly"() {
         given:
         def restTemplate = Stub(RestTemplate)
-        def urlChecker = new UrlChecker(restTemplate)
+        def urlChecker = new UrlChecker(restTemplate, null)
 
         and:
         restTemplate.getForEntity(_, _) >> { return new ResponseEntity<>(httpStatus) }
@@ -30,10 +30,36 @@ class UrlCheckerTest extends Specification {
         "dawdwad"                         | HttpStatus.NOT_FOUND         | false
     }
 
+    def "urls must be loaded from the properties and then checked correctly"() {
+        given:
+        def properties = new KonradProperties()
+        def restTemplate = Stub(RestTemplate)
+        def urlChecker = new UrlChecker(restTemplate, properties)
+
+        and:
+        restTemplate.getForEntity(_, _) >> { return new ResponseEntity<>(httpStatus) }
+        properties.urls = [url]
+
+        when:
+        Map<String, Boolean> urlOkStatuses = urlChecker.checkUrlsFromProperties()
+
+        then:
+        urlOkStatuses.get(url) != null
+        urlOkStatuses.get(url) == isOk
+
+        where:
+        url                               | httpStatus                   | isOk
+        "http://google.com"               | HttpStatus.OK                | true
+        "http://bit.ly/DefEditionSpotify" | HttpStatus.MOVED_PERMANENTLY | true
+        null                              | _                            | false
+        ""                                | _                            | false
+        "dawdwad"                         | HttpStatus.NOT_FOUND         | false
+    }
+
     def "restTemplate should be called"() {
         given:
         def restTemplate = Mock(RestTemplate)
-        def urlChecker = new UrlChecker(restTemplate)
+        def urlChecker = new UrlChecker(restTemplate, null)
 
         when:
         urlChecker.isUrlOk("http://google.com")
