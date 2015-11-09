@@ -9,6 +9,11 @@
       "name": "konrad.webhookurl",
       "type": "java.lang.String",
       "description": "Your slack webhook URL."
+    },
+    {
+      "name": "konrad.interval",
+      "type": "java.lang.Long",
+      "description": "Interval in milliseconds in which all links get checked."
     }
   ]
 }

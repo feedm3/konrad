@@ -29,7 +29,7 @@ public class ScheduledTask {
     @Autowired
     KonradProperties properties;
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRateString = "${konrad.interval}")
     public void reportUrlUpStatus() {
         logger.info("Start checking Urls...");
 
