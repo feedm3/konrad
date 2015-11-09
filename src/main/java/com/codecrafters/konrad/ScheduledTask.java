@@ -20,14 +20,18 @@ public class ScheduledTask {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    private final UrlChecker urlChecker;
+
+    private final KonradProperties properties;
 
     @Autowired
-    UrlChecker urlChecker;
-
-    @Autowired
-    KonradProperties properties;
+    public ScheduledTask(final RestTemplate restTemplate, final UrlChecker urlChecker, final KonradProperties properties) {
+        this.restTemplate = restTemplate;
+        this.urlChecker = urlChecker;
+        this.properties = properties;
+    }
 
     @Scheduled(fixedRateString = "${konrad.interval}")
     public void reportUrlUpStatus() {
