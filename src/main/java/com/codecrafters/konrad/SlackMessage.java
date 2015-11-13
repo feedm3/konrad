@@ -1,11 +1,11 @@
 package com.codecrafters.konrad;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
- * This class is used to represent a message for the slack webhook api.
- *
- * https://api.slack.com/incoming-webhooks
+ * This class is used to represent a <a href="https://api.slack.com/incoming-webhooks">message</a> for the slack webhook api.
  *
  * @author Fabian Dietenberger
  */
@@ -13,8 +13,10 @@ public class SlackMessage {
 
     private String text;
     private String username;
+    private List<Attachment> attachments;
 
     private SlackMessage() {
+        attachments = new ArrayList<>();
     }
 
     public String getText() {
@@ -67,5 +69,30 @@ public class SlackMessage {
             return ":white_check_mark: " + url + "\n";
         }
         return ":no_entry: " + url + "\n";
+    }
+
+    /**
+     * An <a href="https://api.slack.com/docs/attachments">attachment</a> is display under the message text.
+     */
+    class Attachment {
+
+        private String text;
+        private String color;
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(final String text) {
+            this.text = text;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(final String color) {
+            this.color = color;
+        }
     }
 }
