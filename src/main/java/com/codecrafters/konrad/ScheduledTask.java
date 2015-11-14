@@ -1,5 +1,6 @@
 package com.codecrafters.konrad;
 
+import com.codecrafters.konrad.slack.SlackMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,16 +37,22 @@ public class ScheduledTask {
     public void reportUrlUpStatus() {
         logger.info("Start checking Urls...");
 
-        final Map<String, Boolean> urlOkResults = new HashMap<>();
-        for (final String urlToCheck : properties.getUrls()) {
-            boolean urlOk = urlChecker.isUrlOk(urlToCheck);
-            urlOkResults.put(urlToCheck, urlOk);
-        }
+        final Map<String, Boolean> urlOkResults = urlChecker.checkUrlsFromProperties();
 
-        final SlackMessage message = SlackMessage.build(urlOkResults);
+        final SlackMessage message = SlackMessage.builder().urlStatusesAsText(urlOkResults).onlyBadUrls().build();
         restTemplate.postForEntity(properties.getWebhookurl(), message, null);
     }
 
+    // sec min hour
+    @Scheduled(cron = "0 44 19 * * *")
+    public void reportDailyStatus() {
+        logger.info("Daily Check: Report all URL statuses to slack");
+
+        final Map<String, Boolean> urlOkResults = urlChecker.checkUrlsFromProperties();
+
+        final SlackMessage message = SlackMessage.builder().urlStatusesAsText(urlOkResults).build();
+        restTemplate.postForEntity(properties.getWebhookurl(), message, null);
+    }
 }
 
 

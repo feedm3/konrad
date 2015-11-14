@@ -1,5 +1,6 @@
 package com.codecrafters.konrad;
 
+import com.codecrafters.konrad.slack.SlackMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -22,7 +23,7 @@ public class KonradApplication {
     @Bean
     CommandLineRunner runner(final KonradProperties properties, final RestTemplate restTemplate) {
         return args -> {
-            final SlackMessage message = SlackMessage.build("konrad is up and running\n");
+            final SlackMessage message = SlackMessage.builder().text("konrad is up and running").build();
             try {
                 restTemplate.postForEntity(properties.getWebhookurl(), message, null);
             } catch (Exception ignored) {
