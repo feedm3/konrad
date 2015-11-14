@@ -14,7 +14,7 @@ public class SlackMessage {
     private String username;
     private List<Attachment> attachments;
 
-    public SlackMessage() {
+    /* package */ SlackMessage() {
         attachments = new ArrayList<>();
     }
 
