@@ -1,8 +1,7 @@
-package com.codecrafters.konrad;
+package com.codecrafters.konrad.slack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class is used to represent a <a href="https://api.slack.com/incoming-webhooks">message</a> for the slack webhook api.
@@ -15,8 +14,12 @@ public class SlackMessage {
     private String username;
     private List<Attachment> attachments;
 
-    private SlackMessage() {
+    public SlackMessage() {
         attachments = new ArrayList<>();
+    }
+
+    public static SlackMessageBuilder builder() {
+        return new SlackMessageBuilder();
     }
 
     public String getText() {
@@ -35,41 +38,6 @@ public class SlackMessage {
         this.username = username;
     }
 
-    /**
-     * Get an empty message object.
-     *
-     * @return a new message object
-     */
-    public static SlackMessage build(final String text) {
-        final SlackMessage message = new SlackMessage();
-        message.setUsername("konrad");
-        message.setText(text);
-        return message;
-    }
-
-    /**
-     * Get a pre-build message object.
-     *
-     * @param urlStatuses to status mapping to each url
-     * @return a new message object
-     */
-    public static SlackMessage build(final Map<String, Boolean> urlStatuses) {
-        final SlackMessage message = new SlackMessage();
-        message.setUsername("konrad");
-
-        final StringBuilder urlResultListMessage = new StringBuilder();
-        urlStatuses.forEach((url, isOk) -> urlResultListMessage.append(getMessageToUrlStatus(url, isOk)));
-        message.setText(urlResultListMessage.toString());
-
-        return message;
-    }
-
-    private static String getMessageToUrlStatus(final String url, final boolean isOk) {
-        if (isOk) {
-            return ":white_check_mark: " + url + "\n";
-        }
-        return ":no_entry: " + url + "\n";
-    }
 
     /**
      * An <a href="https://api.slack.com/docs/attachments">attachment</a> is display under the message text.
