@@ -3,7 +3,11 @@ package com.codecrafters.konrad.slack;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
+ * This class is used to create new instances of a {@link SlackMessage}.
+ *
  * @author Fabian Dietenberger
  */
 public class SlackMessageBuilder {
@@ -37,7 +41,7 @@ public class SlackMessageBuilder {
     }
 
     public SlackMessageBuilder urlStatusesAsText(final Map<String, Boolean> urlStatuses) {
-        if (urlStatuses == null) throw new IllegalStateException("URL Statueses Map must not be null");
+        checkNotNull(urlStatuses, "URL statuses map must not be null");
         this.urlStatuses = urlStatuses;
         return this;
     }
