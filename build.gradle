@@ -41,7 +41,8 @@ repositories {
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web',
-            'org.springframework.boot:spring-boot-configuration-processor'
+            'org.springframework.boot:spring-boot-configuration-processor',
+            'com.google.guava:guava:18.0'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test',
             'org.codehaus.groovy:groovy-all:2.4.3',
