@@ -1,6 +1,6 @@
 package com.codecrafters.konrad;
 
-import com.codecrafters.konrad.slack.SlackMessage;
+import com.codecrafters.konrad.slack.Slack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -23,14 +23,13 @@ public class KonradApplication {
     }
 
     @Bean
-    CommandLineRunner runner(final KonradProperties properties, final RestTemplate restTemplate) {
+    CommandLineRunner runner(final KonradProperties properties, final Slack slack) {
         return args -> {
             checkNotNull(properties.getWebhookurl(), "Slack webhook url must not be null");
             checkNotNull(properties.getUrls(), "URLs to check must not be null");
 
-            final SlackMessage message = SlackMessage.builder().text("konrad is up and running").build();
             try {
-                restTemplate.postForEntity(properties.getWebhookurl(), message, null);
+                slack.send("konrad is up and running");
             } catch (Exception ignored) {
                 logger.error("Slack Webhook URL not working. Plase check your webhook URL and restart konrad");
                 System.exit(0);

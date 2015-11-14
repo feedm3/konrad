@@ -1,12 +1,12 @@
 package com.codecrafters.konrad;
 
+import com.codecrafters.konrad.slack.Slack;
 import com.codecrafters.konrad.slack.SlackMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
@@ -20,17 +20,14 @@ public class ScheduledTask {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final RestTemplate restTemplate;
+    private final Slack slack;
 
     private final UrlChecker urlChecker;
 
-    private final KonradProperties properties;
-
     @Autowired
-    public ScheduledTask(final RestTemplate restTemplate, final UrlChecker urlChecker, final KonradProperties properties) {
-        this.restTemplate = restTemplate;
+    public ScheduledTask(final Slack slack, final UrlChecker urlChecker) {
+        this.slack = slack;
         this.urlChecker = urlChecker;
-        this.properties = properties;
     }
 
     @Scheduled(fixedRateString = "${konrad.interval}")
@@ -40,7 +37,7 @@ public class ScheduledTask {
         final Map<String, Boolean> urlOkResults = urlChecker.checkUrlsFromProperties();
 
         final SlackMessage message = SlackMessage.builder().urlStatusesAsText(urlOkResults).onlyBadUrls().build();
-        restTemplate.postForEntity(properties.getWebhookurl(), message, null);
+        slack.send(message);
     }
 
     // sec min hour
@@ -51,7 +48,7 @@ public class ScheduledTask {
         final Map<String, Boolean> urlOkResults = urlChecker.checkUrlsFromProperties();
 
         final SlackMessage message = SlackMessage.builder().urlStatusesAsText(urlOkResults).build();
-        restTemplate.postForEntity(properties.getWebhookurl(), message, null);
+        slack.send(message);
     }
 }
 
