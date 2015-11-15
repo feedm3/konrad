@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 @SpringBootApplication
 @EnableScheduling
@@ -25,8 +25,8 @@ public class KonradApplication {
     @Bean
     CommandLineRunner runner(final KonradProperties properties, final Slack slack) {
         return args -> {
-            checkNotNull(properties.getWebhookurl(), "Slack webhook url must not be null");
-            checkNotNull(properties.getUrls(), "URLs to check must not be null");
+            checkArgument(properties.getWebhookurl() != null, "Slack webhook url must not be null");
+            checkArgument(properties.getUrls() != null, "URLs to check must not be null");
 
             try {
                 slack.send("konrad is up and running");
