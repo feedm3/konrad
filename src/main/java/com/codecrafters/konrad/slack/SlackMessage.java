@@ -38,6 +38,13 @@ public class SlackMessage {
         this.username = username;
     }
 
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(final List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
 
     /**
      * An <a href="https://api.slack.com/docs/attachments">attachment</a> is display under the message text.
