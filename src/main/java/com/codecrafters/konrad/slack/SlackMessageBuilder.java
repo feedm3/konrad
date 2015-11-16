@@ -1,5 +1,7 @@
 package com.codecrafters.konrad.slack;
 
+import com.google.common.base.CharMatcher;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +18,8 @@ public class SlackMessageBuilder {
     private String text;
     private Map<String, Boolean> urlStatuses;
 
-    private boolean displayGoodUrls;
+    private boolean displayOnlyGoodUrls;
+    private boolean containsOnlyGoodUrls;
     private KonradMessageType messageType;
 
     public enum KonradMessageType {
@@ -25,7 +28,8 @@ public class SlackMessageBuilder {
     }
 
     public SlackMessageBuilder() {
-        displayGoodUrls = false;
+        displayOnlyGoodUrls = false;
+        containsOnlyGoodUrls = true;
         messageType = KonradMessageType.INTERVAL;
         urlStatuses = new HashMap<>();
     }
@@ -47,8 +51,8 @@ public class SlackMessageBuilder {
         return this;
     }
 
-    public SlackMessageBuilder onlyBadUrls() {
-        this.displayGoodUrls = false;
+    public SlackMessageBuilder displayOnlyBadUrls() {
+        this.displayOnlyGoodUrls = false;
         return this;
     }
 
@@ -59,21 +63,42 @@ public class SlackMessageBuilder {
         message.setUsername(username);
 
         if (!urlStatuses.isEmpty()) {
-            final StringBuilder urlResultListMessage = new StringBuilder();
-            urlStatuses.forEach((url, isOk) -> urlResultListMessage.append(getMessageToUrlStatus(url, isOk)));
-            message.setText(urlResultListMessage.toString());
+            final StringBuilder goodUrlsText = new StringBuilder();
+            final StringBuilder badUrlsText = new StringBuilder();
+
+            // TODO use a Joiner
+            urlStatuses.forEach((url, isOk) -> {
+                if (isOk) {
+                    goodUrlsText
+                            .append(url)
+                            .append("\n");
+                } else {
+                    badUrlsText
+                            .append(url)
+                            .append("\n");
+                    containsOnlyGoodUrls = false;
+                }
+            });
+
+            final SlackMessage.Attachment goodAttachment = new SlackMessage.Attachment();
+            goodAttachment.setColor("good");
+            String goodUrlsTrimmedText = CharMatcher.anyOf(" \n").trimAndCollapseFrom(goodUrlsText.toString(), ' ');
+            goodAttachment.setText(goodUrlsTrimmedText);
+
+            final SlackMessage.Attachment badAttachment = new SlackMessage.Attachment();
+            badAttachment.setColor("danger");
+            String badUrlsTrimmedText = CharMatcher.anyOf(" \n").trimAndCollapseFrom(badUrlsText.toString(), ' ');
+            badAttachment.setText(badUrlsTrimmedText);
+
+            if (containsOnlyGoodUrls) {
+                message.setText("*Results*\nAll URLs are ok");
+            } else {
+                message.setText("*Results*\nSome URLs are not reachable");
+            }
+
+            message.getAttachments().add(badAttachment);
+            message.getAttachments().add(goodAttachment);
         }
         return message;
     }
-
-    private String getMessageToUrlStatus(final String url, final boolean isOk) {
-        if (isOk) {
-            return ":white_check_mark: " + url + "\n";
-        }
-        if (displayGoodUrls) {
-            return "";
-        }
-        return ":no_entry: " + url + "\n";
-    }
-
 }
