@@ -1,4 +1,6 @@
 package com.codecrafters.konrad
+
+import com.google.common.collect.Multimap
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
@@ -41,11 +43,11 @@ class UrlCheckerTest extends Specification {
         properties.urls = [url]
 
         when:
-        Map<String, Boolean> urlOkStatuses = urlChecker.checkUrlsFromProperties()
+        Multimap<Boolean, String> urlOkStatuses = urlChecker.checkUrlsFromProperties()
 
         then:
-        urlOkStatuses.get(url) != null
-        urlOkStatuses.get(url) == isOk
+        urlOkStatuses.get(isOk) != null
+        urlOkStatuses.get(isOk).getAt(0) == url
 
         where:
         url                               | httpStatus                   | isOk

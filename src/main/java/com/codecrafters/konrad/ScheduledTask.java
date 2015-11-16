@@ -2,6 +2,7 @@ package com.codecrafters.konrad;
 
 import com.codecrafters.konrad.slack.Slack;
 import com.codecrafters.konrad.slack.SlackMessage;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,11 @@ public class ScheduledTask {
     public void reportUrlUpStatus() {
         logger.info("Start checking Urls...");
 
-        final Map<String, Boolean> urlOkResults = urlChecker.checkUrlsFromProperties();
+        final Multimap<Boolean, String> urlStatusResults = urlChecker.checkUrlsFromProperties();
 
         final SlackMessage message = SlackMessage
                                         .builder()
-                                        .urlStatusesAsText(urlOkResults)
+                                        .urlStatusesAsText(urlStatusResults)
                                         .displayOnlyBadUrls()
                                         .build();
         slack.send(message);
@@ -49,11 +50,11 @@ public class ScheduledTask {
     public void reportDailyStatus() {
         logger.info("Daily Check: Report all URL statuses to slack");
 
-        final Map<String, Boolean> urlOkResults = urlChecker.checkUrlsFromProperties();
+        final Multimap<Boolean, String> urlStatusResults = urlChecker.checkUrlsFromProperties();
 
         final SlackMessage message = SlackMessage
                                         .builder()
-                                        .urlStatusesAsText(urlOkResults)
+                                        .urlStatusesAsText(urlStatusResults)
                                         .build();
         slack.send(message);
     }

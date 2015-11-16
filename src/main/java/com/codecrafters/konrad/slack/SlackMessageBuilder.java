@@ -1,9 +1,11 @@
 package com.codecrafters.konrad.slack;
 
-import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -16,7 +18,7 @@ public class SlackMessageBuilder {
 
     private final String username = "konrad";
     private String text;
-    private Map<String, Boolean> urlStatuses;
+    private Multimap<Boolean, String> urlStatuses;
 
     private boolean displayOnlyGoodUrls;
     private boolean containsOnlyGoodUrls;
@@ -31,7 +33,7 @@ public class SlackMessageBuilder {
         displayOnlyGoodUrls = false;
         containsOnlyGoodUrls = true;
         messageType = KonradMessageType.INTERVAL;
-        urlStatuses = new HashMap<>();
+        urlStatuses = HashMultimap.create();
     }
 
     public SlackMessageBuilder text(final String text) {
@@ -45,7 +47,7 @@ public class SlackMessageBuilder {
         return this;
     }
 
-    public SlackMessageBuilder urlStatusesAsText(final Map<String, Boolean> urlStatuses) {
+    public SlackMessageBuilder urlStatusesAsText(final Multimap<Boolean, String> urlStatuses) {
         checkArgument(urlStatuses != null, "URL statuses map must not be null");
         this.urlStatuses = urlStatuses;
         return this;
@@ -63,32 +65,21 @@ public class SlackMessageBuilder {
         message.setUsername(username);
 
         if (!urlStatuses.isEmpty()) {
-            final StringBuilder goodUrlsText = new StringBuilder();
-            final StringBuilder badUrlsText = new StringBuilder();
+            final List<String> goodUrls = ImmutableList.copyOf(urlStatuses.get(true));
+            final List<String> badUrls = ImmutableList.copyOf(urlStatuses.get(false));
 
-            // TODO use a Joiner
-            urlStatuses.forEach((url, isOk) -> {
-                if (isOk) {
-                    goodUrlsText
-                            .append(url)
-                            .append("\n");
-                } else {
-                    badUrlsText
-                            .append(url)
-                            .append("\n");
-                    containsOnlyGoodUrls = false;
-                }
-            });
+            final String goodUrlsText = Joiner.on("\n").join(goodUrls);
+            final String badUrlsText = Joiner.on("\n").join(badUrls);
+
+            containsOnlyGoodUrls = badUrls.isEmpty();
 
             final SlackMessage.Attachment goodAttachment = new SlackMessage.Attachment();
             goodAttachment.setColor("good");
-            String goodUrlsTrimmedText = CharMatcher.anyOf(" \n").trimAndCollapseFrom(goodUrlsText.toString(), ' ');
-            goodAttachment.setText(goodUrlsTrimmedText);
+            goodAttachment.setText(goodUrlsText);
 
             final SlackMessage.Attachment badAttachment = new SlackMessage.Attachment();
             badAttachment.setColor("danger");
-            String badUrlsTrimmedText = CharMatcher.anyOf(" \n").trimAndCollapseFrom(badUrlsText.toString(), ' ');
-            badAttachment.setText(badUrlsTrimmedText);
+            badAttachment.setText(badUrlsText);
 
             if (containsOnlyGoodUrls) {
                 message.setText("*Results*\nAll URLs are ok");

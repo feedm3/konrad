@@ -1,5 +1,7 @@
 package com.codecrafters.konrad;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,8 +10,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class is used the check if a URL is up or down.
@@ -34,15 +34,15 @@ public class UrlChecker {
     /**
      * Load urls from the .properties file, check them and return the result.
      *
-     * @return map with url and status mapping. if status is true the url is ok
+     * @return map with status to urls
      */
-    public Map<String, Boolean> checkUrlsFromProperties() {
-        final Map<String, Boolean> urlOkResults = new HashMap<>();
-        for (final String urlToCheck : properties.getUrls()) {
-            boolean urlOk = isUrlOk(urlToCheck);
-            urlOkResults.put(urlToCheck, urlOk);
+    public Multimap<Boolean, String> checkUrlsFromProperties() {
+        final Multimap<Boolean, String> urlStatuses = HashMultimap.create();
+        for (final String url : properties.getUrls()) {
+            boolean isOk = isUrlOk(url);
+            urlStatuses.put(isOk, url);
         }
-        return urlOkResults;
+        return urlStatuses;
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.codecrafters.konrad.slack
 
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -23,9 +25,9 @@ class SlackMessageBuilderTest extends Specification {
 
     def "create a interval message"() {
         given:
-        Map<String, Boolean> urlStatueses = new HashMap<>()
-        urlStatueses.put("www.google.de", true)
-        urlStatueses.put("www.dadwwdaiodjawdj.grdg", false)
+        Multimap<Boolean, String> urlStatueses = HashMultimap.create()
+        urlStatueses.put(Boolean.TRUE, "www.google.de")
+        urlStatueses.put(Boolean.FALSE, "www.dadwwdaiodjawdj.grdg")
 
         when:
         def message = builder
