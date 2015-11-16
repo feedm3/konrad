@@ -49,7 +49,7 @@ public class SlackMessage {
     /**
      * An <a href="https://api.slack.com/docs/attachments">attachment</a> is display under the message text.
      */
-    class Attachment {
+    public static class Attachment {
 
         private String text;
         private String color;
