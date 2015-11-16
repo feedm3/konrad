@@ -36,7 +36,11 @@ public class ScheduledTask {
 
         final Map<String, Boolean> urlOkResults = urlChecker.checkUrlsFromProperties();
 
-        final SlackMessage message = SlackMessage.builder().urlStatusesAsText(urlOkResults).onlyBadUrls().build();
+        final SlackMessage message = SlackMessage
+                                        .builder()
+                                        .urlStatusesAsText(urlOkResults)
+                                        .displayOnlyBadUrls()
+                                        .build();
         slack.send(message);
     }
 
@@ -47,7 +51,10 @@ public class ScheduledTask {
 
         final Map<String, Boolean> urlOkResults = urlChecker.checkUrlsFromProperties();
 
-        final SlackMessage message = SlackMessage.builder().urlStatusesAsText(urlOkResults).build();
+        final SlackMessage message = SlackMessage
+                                        .builder()
+                                        .urlStatusesAsText(urlOkResults)
+                                        .build();
         slack.send(message);
     }
 }
