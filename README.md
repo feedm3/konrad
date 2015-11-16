@@ -14,3 +14,14 @@ the following properties inside the `application.properties`
 3. `konrad.interval` interval (in milliseconds) in which konrad checks your URLs (default = 5000)
 
 Start konrad with `java -jar konrad-0.5.0.jar`
+
+## Test
+
+To run all tests just hit
+
+```
+gradlew test
+```
+
+>  You have to set the ```konrad.webhookurl``` for the
+integration tests.
