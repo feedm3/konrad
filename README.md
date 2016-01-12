@@ -19,6 +19,10 @@ optional properties
 
 You can than start konrad with `java -jar konrad-0.5.0.jar`
 
+By default, konrad will check your URLs every 5 minutes and will then send you a message if a URL is down. You also
+will receive a message every midnight to get a feedback that konrad is still running.
+
+
 ## Test
 
 To run all tests just hit
