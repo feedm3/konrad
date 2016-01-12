@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.3.0.RELEASE'
+        springBootVersion = '1.3.1.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -42,13 +42,13 @@ repositories {
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-configuration-processor',
-            'com.google.guava:guava:18.0'
+            'com.google.guava:guava:19.0'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test',
-            'org.codehaus.groovy:groovy-all:2.4.3',
+            'org.codehaus.groovy:groovy-all:2.4.5',
             'org.spockframework:spock-core:1.0-groovy-2.4',
             'org.spockframework:spock-spring:1.0-groovy-2.4',
-            'cglib:cglib-nodep:3.1'
+            'cglib:cglib-nodep:3.2.0'
 }
 
 
@@ -60,5 +60,5 @@ eclipse {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.8'
+    gradleVersion = '2.10'
 }
