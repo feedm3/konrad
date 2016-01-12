@@ -11,27 +11,26 @@ import org.springframework.stereotype.Component;
 
 /**
  * This class is used to schedule the {@link UrlChecker}.
- *
  * <p>
- *     The scheduler has 2 schedules. One gets executed at a given interval (from the properties)
- *     and the other one gets executed every day at midnight.
+ * The scheduler has 2 schedules. One gets executed at a given interval (from the properties)
+ * and the other one gets executed every day at midnight.
  * </p>
  *
- *  @author Fabian Dietenberger
+ * @author Fabian Dietenberger
  */
 @Component
 public class ScheduledTask {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final Slack slack;
-
     private final UrlChecker urlChecker;
+    private final KonradProperties properties;
 
     @Autowired
-    public ScheduledTask(final Slack slack, final UrlChecker urlChecker) {
+    public ScheduledTask(final Slack slack, final UrlChecker urlChecker, final KonradProperties properties) {
         this.slack = slack;
         this.urlChecker = urlChecker;
+        this.properties = properties;
     }
 
     @Scheduled(fixedRateString = "${konrad.interval}")
@@ -39,11 +38,12 @@ public class ScheduledTask {
         logger.info("Checking URLs and creating interval report");
 
         final Multimap<Boolean, String> urlStatusResults = urlChecker.checkUrlsFromProperties();
-        final SlackMessage message = SlackMessage
-                                        .builder()
-                                        .urlStatusesAsText(urlStatusResults)
-                                        .build();
-        slack.send(message);
+        if (!properties.isReportOnlyWhenBrokenUrls() ||
+                (properties.isReportOnlyWhenBrokenUrls() && !urlStatusResults.get(false).isEmpty())) {
+            // report if we do not need to check if there are broken urls or
+            // we need to check and there are broken urls
+            createMessageAndSendToSlack(urlStatusResults);
+        }
     }
 
     // cron: sec min hour
@@ -52,10 +52,14 @@ public class ScheduledTask {
         logger.info("Checking URLs and creating daily report");
 
         final Multimap<Boolean, String> urlStatusResults = urlChecker.checkUrlsFromProperties();
+        createMessageAndSendToSlack(urlStatusResults);
+    }
+
+    private void createMessageAndSendToSlack(final Multimap<Boolean, String> urlStatusResults) {
         final SlackMessage message = SlackMessage
-                                        .builder()
-                                        .urlStatusesAsText(urlStatusResults)
-                                        .build();
+                .builder()
+                .urlStatusesAsText(urlStatusResults)
+                .build();
         slack.send(message);
     }
 }

@@ -14,6 +14,12 @@
       "name": "konrad.interval",
       "type": "java.lang.Long",
       "description": "Interval in milliseconds in which all links get checked."
+    },
+    {
+      "name": "konrad.report-only-when-broken-urls",
+      "type": "java.lang.Boolean",
+      "description": "Only send a message to slack when there is a broken URL. Doesn't get applied to the daily message.",
+      "defaultValue": true
     }
   ]
 }
