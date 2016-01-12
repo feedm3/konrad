@@ -72,4 +72,4 @@ hs_err_pid*
 ### Custom
 !.idea/runConfigurations/
 !gradle/wrapper/*jar
-application-prod.properties
+src/main/resources/application-prod.properties
