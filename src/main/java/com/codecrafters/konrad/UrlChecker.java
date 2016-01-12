@@ -39,8 +39,10 @@ public class UrlChecker {
     public Multimap<Boolean, String> checkUrlsFromProperties() {
         final Multimap<Boolean, String> urlStatuses = HashMultimap.create();
         for (final String url : properties.getUrls()) {
-            boolean isOk = isUrlOk(url);
-            urlStatuses.put(isOk, url);
+            if (url != null) {
+                boolean isOk = isUrlOk(url);
+                urlStatuses.put(isOk, url);
+            }
         }
         return urlStatuses;
     }
