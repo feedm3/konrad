@@ -10,7 +10,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * This class is used to request url's and check if they are up or down.
+ * This class is used to schedule the {@link UrlChecker}.
+ *
+ * <p>
+ *     The scheduler has 2 schedules. One gets executed at a given interval (from the properties)
+ *     and the other one gets executed every day at midnight.
+ * </p>
  *
  *  @author Fabian Dietenberger
  */
@@ -30,26 +35,23 @@ public class ScheduledTask {
     }
 
     @Scheduled(fixedRateString = "${konrad.interval}")
-    public void reportUrlUpStatus() {
-        logger.info("Start checking Urls...");
+    public void reportIntervalStatus() {
+        logger.info("Checking URLs and creating interval report");
 
         final Multimap<Boolean, String> urlStatusResults = urlChecker.checkUrlsFromProperties();
-
         final SlackMessage message = SlackMessage
                                         .builder()
                                         .urlStatusesAsText(urlStatusResults)
-                                        .displayOnlyBrokenUrls()
                                         .build();
         slack.send(message);
     }
 
-    // sec min hour
-    @Scheduled(cron = "0 44 19 * * *")
+    // cron: sec min hour
+    @Scheduled(cron = "0 0 0 * * *")
     public void reportDailyStatus() {
-        logger.info("Daily Check: Report all URL statuses to slack");
+        logger.info("Checking URLs and creating daily report");
 
         final Multimap<Boolean, String> urlStatusResults = urlChecker.checkUrlsFromProperties();
-
         final SlackMessage message = SlackMessage
                                         .builder()
                                         .urlStatusesAsText(urlStatusResults)
