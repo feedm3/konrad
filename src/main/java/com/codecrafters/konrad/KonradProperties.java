@@ -17,6 +17,7 @@ public class KonradProperties {
     private List<String> urls;
     private String webhookurl;
     private boolean reportOnlyWhenBrokenUrls;
+    private long interval;
 
     public List<String> getUrls() {
         return urls;
@@ -40,5 +41,13 @@ public class KonradProperties {
 
     public void setReportOnlyWhenBrokenUrls(final boolean reportOnlyWhenBrokenUrls) {
         this.reportOnlyWhenBrokenUrls = reportOnlyWhenBrokenUrls;
+    }
+
+    public long getInterval() {
+        return interval;
+    }
+
+    public void setInterval(final long interval) {
+        this.interval = interval;
     }
 }
