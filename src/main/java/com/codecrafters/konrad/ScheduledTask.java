@@ -26,11 +26,15 @@ public class ScheduledTask {
     private final UrlChecker urlChecker;
     private final KonradProperties properties;
 
+    // if the interval is executed the first time make sure to send a message to slack
+    private boolean firstIntervalExecution;
+
     @Autowired
     public ScheduledTask(final Slack slack, final UrlChecker urlChecker, final KonradProperties properties) {
         this.slack = slack;
         this.urlChecker = urlChecker;
         this.properties = properties;
+        firstIntervalExecution = true;
     }
 
     @Scheduled(fixedRateString = "${konrad.interval}")
@@ -43,7 +47,10 @@ public class ScheduledTask {
             // report if we do not need to check if there are broken urls or
             // we need to check and there are broken urls
             createMessageAndSendToSlack(urlStatusResults);
+        } else if (firstIntervalExecution) {
+            createMessageAndSendToSlack(urlStatusResults);
         }
+        firstIntervalExecution = false;
     }
 
     // cron: sec min hour
