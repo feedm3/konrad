@@ -19,10 +19,7 @@ import java.net.URI;
 @Component
 public class UrlChecker {
 
-    // to  make external requests
     private final RestTemplate restTemplate;
-
-    // properties from the .properties file
     private final KonradProperties properties;
 
     @Autowired

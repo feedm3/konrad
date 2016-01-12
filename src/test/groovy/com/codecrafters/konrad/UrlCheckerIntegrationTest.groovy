@@ -9,6 +9,8 @@ import spock.lang.Specification
 
 
 /**
+ * This class is used as intergration test fot the {@}
+ *
  * @author Fabian Dietenberger
  */
 @ContextConfiguration(loader = SpringApplicationContextLoader.class, classes = KonradApplication.class)

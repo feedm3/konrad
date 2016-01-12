@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 public class Slack {
 
     private final RestTemplate restTemplate;
-
     private final KonradProperties properties;
 
     @Autowired
