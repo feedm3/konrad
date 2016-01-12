@@ -21,10 +21,7 @@ public class SlackMessageBuilder {
     private String text;
     private Multimap<Boolean, String> urlStatuses;
 
-    private boolean displayOnlyBrokenUrls;
-
     public SlackMessageBuilder() {
-        displayOnlyBrokenUrls = false;
         urlStatuses = HashMultimap.create();
     }
 
@@ -43,11 +40,6 @@ public class SlackMessageBuilder {
     public SlackMessageBuilder urlStatusesAsText(final Multimap<Boolean, String> urlStatuses) {
         checkArgument(urlStatuses != null, "URL statuses map must not be null");
         this.urlStatuses = urlStatuses;
-        return this;
-    }
-
-    public SlackMessageBuilder displayOnlyBrokenUrls() {
-        this.displayOnlyBrokenUrls = true;
         return this;
     }
 
