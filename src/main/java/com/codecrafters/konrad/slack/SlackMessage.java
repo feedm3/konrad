@@ -6,6 +6,8 @@ import java.util.List;
 /**
  * This class is used to represent a <a href="https://api.slack.com/incoming-webhooks">message</a> for the slack webhook api.
  *
+ * To create a new instance you have to use the static {@link #builder()} method.
+ *
  * @author Fabian Dietenberger
  */
 public class SlackMessage {
@@ -18,6 +20,12 @@ public class SlackMessage {
         attachments = new ArrayList<>();
     }
 
+    /**
+     * Get a new {@link SlackMessageBuilder} to create
+     * a new instace of a {@link SlackMessage}
+     *
+     * @return a new {@link SlackMessageBuilder}
+     */
     public static SlackMessageBuilder builder() {
         return new SlackMessageBuilder();
     }

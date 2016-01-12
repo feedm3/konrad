@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 /**
+ * This class is used to access the properties.
+ *
  * @author Fabian Dietenberger
  */
 @Configuration
