@@ -16,23 +16,15 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class SlackMessageBuilder {
 
-    private final String username = "konrad";
+    private final String USERNAME = "konrad";
+
     private String text;
     private Multimap<Boolean, String> urlStatuses;
 
-    private boolean displayOnlyGoodUrls;
-    private boolean containsOnlyGoodUrls;
-    private KonradMessageType messageType;
-
-    public enum KonradMessageType {
-        INTERVAL,
-        DAILY
-    }
+    private boolean displayOnlyBrokenUrls;
 
     public SlackMessageBuilder() {
-        displayOnlyGoodUrls = false;
-        containsOnlyGoodUrls = true;
-        messageType = KonradMessageType.INTERVAL;
+        displayOnlyBrokenUrls = false;
         urlStatuses = HashMultimap.create();
     }
 
@@ -42,36 +34,35 @@ public class SlackMessageBuilder {
         return this;
     }
 
-    public SlackMessageBuilder messageType(final KonradMessageType konradMessageType) {
-        this.messageType = konradMessageType;
-        return this;
-    }
-
+    /**
+     * Put the statuses of the urls into the {@link SlackMessage}s text field.
+     * This will override the text that can be set in the {@link #text} method.
+     *
+     * @param urlStatuses the status (true = ok, false = down) and the corresponding urls
+     */
     public SlackMessageBuilder urlStatusesAsText(final Multimap<Boolean, String> urlStatuses) {
         checkArgument(urlStatuses != null, "URL statuses map must not be null");
         this.urlStatuses = urlStatuses;
         return this;
     }
 
-    public SlackMessageBuilder displayOnlyBadUrls() {
-        this.displayOnlyGoodUrls = false;
+    public SlackMessageBuilder displayOnlyBrokenUrls() {
+        this.displayOnlyBrokenUrls = true;
         return this;
     }
-
 
     public SlackMessage build() {
         final SlackMessage message = new SlackMessage();
         message.setText(text);
-        message.setUsername(username);
+        message.setUsername(USERNAME);
 
         if (!urlStatuses.isEmpty()) {
             final List<String> goodUrls = ImmutableList.copyOf(urlStatuses.get(true));
-            final List<String> badUrls = ImmutableList.copyOf(urlStatuses.get(false));
+            final List<String> brokenUrls = ImmutableList.copyOf(urlStatuses.get(false));
 
             final String goodUrlsText = Joiner.on("\n").join(goodUrls);
-            final String badUrlsText = Joiner.on("\n").join(badUrls);
+            final String brokenUrlsText = Joiner.on("\n").join(brokenUrls);
 
-            containsOnlyGoodUrls = badUrls.isEmpty();
 
             final SlackMessage.Attachment goodAttachment = new SlackMessage.Attachment();
             goodAttachment.setColor("good");
@@ -79,16 +70,22 @@ public class SlackMessageBuilder {
 
             final SlackMessage.Attachment badAttachment = new SlackMessage.Attachment();
             badAttachment.setColor("danger");
-            badAttachment.setText(badUrlsText);
+            badAttachment.setText(brokenUrlsText);
 
-            if (containsOnlyGoodUrls) {
-                message.setText("*Results*\nAll URLs are ok");
+            final boolean containsGoodUrls = !goodUrls.isEmpty();
+            final boolean containsBrokenUrls = !brokenUrls.isEmpty();
+
+            if (containsGoodUrls && !containsBrokenUrls) {
+                message.setText("*All URLs are ok*");
+                message.getAttachments().add(goodAttachment);
+            } else if (!containsGoodUrls && containsBrokenUrls) {
+                message.setText("*All URLs are down*");
+                message.getAttachments().add(badAttachment);
             } else {
-                message.setText("*Results*\nSome URLs are not reachable");
+                message.setText("*Some URLs are not reachable*");
+                message.getAttachments().add(goodAttachment);
+                message.getAttachments().add(badAttachment);
             }
-
-            message.getAttachments().add(badAttachment);
-            message.getAttachments().add(goodAttachment);
         }
         return message;
     }

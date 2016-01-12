@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 /**
  * This class is used to request url's and check if they are up or down.
  *
@@ -40,7 +38,7 @@ public class ScheduledTask {
         final SlackMessage message = SlackMessage
                                         .builder()
                                         .urlStatusesAsText(urlStatusResults)
-                                        .displayOnlyBadUrls()
+                                        .displayOnlyBrokenUrls()
                                         .build();
         slack.send(message);
     }
