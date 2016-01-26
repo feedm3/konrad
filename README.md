@@ -1,6 +1,6 @@
 # konrad
 
-[![Build Status](https://travis-ci.org/feedm3/konrad.svg)](https://travis-ci.org/feedm3/konrad)
+[![Build Status](https://img.shields.io/travis/feedm3/konrad.svg?style=flat-square)](https://travis-ci.org/feedm3/konrad)
 
 konrad checks your URL's in a given interval. If one or more is down you get a message in [slack](https://slack.com/).
 
